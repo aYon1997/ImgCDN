@@ -1,19 +1,376 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
   <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>批量图片压缩</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图片CDN管理系统 - ImgCDN</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            width: 100%;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 50px 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.95;
+            font-weight: 300;
+        }
+
+        .content {
+            padding: 50px 40px;
+        }
+
+        .section {
+            margin-bottom: 40px;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            color: #333;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            font-weight: 600;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin-right: 12px;
+            border-radius: 2px;
+        }
+
+        .card {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 20px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid #e9ecef;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .card h3 {
+            color: #667eea;
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .card p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px 30px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn-secondary:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .folder-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .folder-card {
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .folder-card:hover {
+            border-color: #667eea;
+            transform: translateY(-3px);
+        }
+
+        .folder-icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+
+        .folder-name {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+        }
+
+        .folder-desc {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .feature-item {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .feature-text {
+            color: #666;
+            font-size: 0.95rem;
+        }
+
+        footer {
+            background: #f8f9fa;
+            padding: 30px 40px;
+            text-align: center;
+            color: #666;
+            border-top: 1px solid #e9ecef;
+        }
+
+        footer a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .content {
+                padding: 30px 20px;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            .folder-info {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
   </head>
   <body>
-    Please Click Here：
-    <div>
-      <a href="https://tinypng.com/">https://tinypng.com/</a>
+    <div class="container">
+        <div class="header">
+            <h1>🖼️ ImgCDN 图片管理系统</h1>
+            <p>简单高效的图片CDN托管解决方案</p>
+        </div>
+
+        <div class="content">
+            <div class="section">
+                <h2 class="section-title">图片压缩指南</h2>
+                <div class="card">
+                    <h3>🗜️ 使用 TinyPNG 压缩图片</h3>
+                    <p>TinyPNG 是一款优秀的在线图片压缩工具，可以在保持图片质量的同时大幅减小文件大小。</p>
+                    <p><strong>压缩效果：</strong>平均减小 50-70% 文件大小，画质肉眼几乎不可见差异。</p>
+                    <div class="button-group">
+                        <a href="https://tinypng.com/" target="_blank" class="btn btn-primary">
+                            前往 TinyPNG 压缩
+                        </a>
+                        <a href="https://tinify.cn/" target="_blank" class="btn btn-secondary">
+                            TinyPNG 中国镜像
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2 class="section-title">目录说明</h2>
+                <div class="folder-info">
+                    <div class="folder-card">
+                        <div class="folder-icon">📁</div>
+                        <div class="folder-name">img/</div>
+                        <div class="folder-desc">原始图片文件夹<br>存放未压缩的原图</div>
+                    </div>
+                    <div class="folder-card">
+                        <div class="folder-icon">📂</div>
+                        <div class="folder-name">tinyPngImg/</div>
+                        <div class="folder-desc">压缩图片文件夹<br>存放压缩后的图片</div>
+                    </div>
+                    <div class="folder-card">
+                        <div class="folder-icon">🛠️</div>
+                        <div class="folder-name">CDN-server/</div>
+                        <div class="folder-desc">开发工具文档<br>Stagewise插件指南</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2 class="section-title">使用流程</h2>
+                <div class="card">
+                    <h3>📋 三步完成图片上传</h3>
+                    <div class="features">
+                        <div class="feature-item">
+                            <div class="feature-icon">1️⃣</div>
+                            <div class="feature-text">将原图放入<br>img/ 文件夹</div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">2️⃣</div>
+                            <div class="feature-text">使用 TinyPNG<br>压缩图片</div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">3️⃣</div>
+                            <div class="feature-text">压缩后的图片<br>放入 tinyPngImg/</div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">✅</div>
+                            <div class="feature-text">提交到 Git<br>即可使用</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2 class="section-title">图片访问</h2>
+                <div class="card">
+                    <h3>🔗 CDN图片URL格式</h3>
+                    <p>部署后，您可以通过以下格式访问图片：</p>
+                    <p style="background: #e9ecef; padding: 15px; border-radius: 8px; font-family: monospace; color: #667eea; margin-top: 10px;">
+                        https://your-domain.com/tinyPngImg/图片名称.jpg
+                    </p>
+                    <p style="margin-top: 15px;">
+                        <strong>提示：</strong>建议使用英文命名图片，避免中文和特殊字符。
+                    </p>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2 class="section-title">相关资源</h2>
+                <div class="button-group">
+                    <a href="./CDN-server/index.html" class="btn btn-secondary">
+                        📚 Stagewise 插件指南
+                    </a>
+                    <a href="https://github.com" target="_blank" class="btn btn-secondary">
+                        💻 查看项目源码
+                    </a>
+                </div>
+            </div>
     </div>
-    <div>
-      <div>img：原图文件夹</div>
-      <div>tinyPngImg：无损压缩后的图片</div>
+
+        <footer>
+            <p>
+                <strong>ImgCDN</strong> - 让图片管理更简单 | 
+                <a href="https://tinypng.com/" target="_blank">TinyPNG</a> · 
+                <a href="./CDN-server/index.html">文档</a> · 
+                <a href="https://github.com" target="_blank">GitHub</a>
+            </p>
+            <p style="margin-top: 10px; font-size: 0.9rem;">
+                © 2023 ImgCDN Project. Built with ❤️
+            </p>
+        </footer>
     </div>
   </body>
 </html>

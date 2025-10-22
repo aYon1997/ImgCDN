@@ -1,0 +1,50 @@
+{
+  "name": "imgcdn",
+  "version": "1.0.0",
+  "description": "简单高效的图片CDN托管解决方案",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "serve": "node server/index.js",
+    "dev": "nodemon server/index.js",
+    "compress": "node scripts/compress-images.js",
+    "upload": "node scripts/upload-images.js",
+    "preview": "node server/preview-server.js",
+    "build": "echo 'This is a static project, no build needed'",
+    "clean": "node scripts/clean-temp.js"
+  },
+  "keywords": [
+    "cdn",
+    "image",
+    "compression",
+    "tinypng",
+    "hosting"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "multer": "^1.4.5-lts.1",
+    "sharp": "^0.32.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1",
+    "tinify": "^1.7.1",
+    "dotenv": "^16.3.1",
+    "chalk": "^4.1.2",
+    "ora": "^5.4.1"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/ImgCDN.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-username/ImgCDN/issues"
+  },
+  "homepage": "https://github.com/your-username/ImgCDN#readme"
+}
+
